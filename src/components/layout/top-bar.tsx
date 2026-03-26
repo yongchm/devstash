@@ -2,12 +2,24 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus } from "lucide-react";
+import { Search, Plus, PanelLeft } from "lucide-react";
 
-export function TopBar() {
+interface TopBarProps {
+  onToggleSidebar?: () => void;
+}
+
+export function TopBar({ onToggleSidebar }: TopBarProps) {
   return (
-    <header className="flex h-14 items-center gap-4 border-b border-border bg-background px-4">
-      <div className="flex items-center gap-2 font-semibold text-foreground">
+    <header className="flex h-14 items-center gap-2 border-b border-border bg-background px-4 shrink-0">
+      <button
+        onClick={onToggleSidebar}
+        className="p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors shrink-0"
+        aria-label="Toggle sidebar"
+      >
+        <PanelLeft className="h-5 w-5" />
+      </button>
+
+      <div className="flex items-center gap-2 font-semibold text-foreground shrink-0">
         <span className="text-lg">DevStash</span>
       </div>
 

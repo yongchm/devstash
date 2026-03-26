@@ -1,17 +1,12 @@
-import { TopBar } from "@/components/layout/top-bar";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 
 export default function DashboardPage() {
   return (
-    <div className="flex flex-col h-full min-h-screen bg-background">
-      <TopBar />
-      <div className="flex flex-1">
-        <aside className="w-60 border-r border-border p-4">
-          <h2 className="text-foreground font-semibold">Sidebar</h2>
-        </aside>
-        <main className="flex-1 p-6">
-          <h2 className="text-foreground font-semibold">Main</h2>
-        </main>
+    <DashboardLayout>
+      <div className="p-6">
+        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">Your developer knowledge hub</p>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
