@@ -1,17 +1,25 @@
+"use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Star, MoreHorizontal } from "lucide-react";
-import { getTypeMeta } from "@/lib/item-type-meta";
-import { mockCollections } from "@/lib/mock-data";
+import { getTypeMetaByName } from "@/lib/item-type-meta";
+import type { CollectionWithMeta } from "@/lib/db/collections";
 
 interface CollectionCardProps {
-  collection: (typeof mockCollections)[number];
-  typeIds: string[];
+  collection: CollectionWithMeta;
 }
 
-export function CollectionCard({ collection, typeIds }: CollectionCardProps) {
+export function CollectionCard({ collection }: CollectionCardProps) {
+  const borderColor = collection.dominantTypeName
+    ? getTypeMetaByName(collection.dominantTypeName).color
+    : undefined;
+
   return (
-    <Card className="flex flex-col hover:border-border/60 transition-colors">
+    <Card
+      className="flex flex-col hover:border-border/60 transition-colors"
+      style={borderColor ? { borderColor: `${borderColor}55` } : undefined}
+    >
       <CardHeader className="pb-2 flex-row items-start justify-between space-y-0">
         <CardTitle className="flex items-center gap-1.5 text-sm font-medium min-w-0">
           <span className="truncate">{collection.name}</span>
@@ -33,13 +41,13 @@ export function CollectionCard({ collection, typeIds }: CollectionCardProps) {
           </p>
         )}
 
-        {typeIds.length > 0 && (
+        {collection.typeNames.length > 0 && (
           <div className="flex items-center gap-1.5 mt-auto pt-1">
-            {typeIds.map((typeId) => {
-              const { icon: Icon, color } = getTypeMeta(typeId);
+            {collection.typeNames.map((name) => {
+              const { icon: Icon, color } = getTypeMetaByName(name);
               return (
                 <div
-                  key={typeId}
+                  key={name}
                   className="h-6 w-6 rounded flex items-center justify-center bg-muted"
                 >
                   <Icon className="h-3.5 w-3.5" style={{ color }} />

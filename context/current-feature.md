@@ -1,20 +1,33 @@
 # Current Feature
 
-<!-- Feature name here -->
+Dashboard Collections — Real Data
 
 ## Status
 
 <!-- Not Started|In Progress|Completed -->
 
-Not Started
+In Progress
 
 ## Goals
 
 <!-- Goals & requirements -->
 
+- Replace dummy collection data in the main dashboard area with real data from Neon via Prisma
+- Create `src/lib/db/collections.ts` with data fetching functions
+- Fetch collections directly in server component (no client fetching)
+- Collection card border color derived from most-used content type in that collection
+- Show small icons of all item types present in that collection
+- Keep the current design intact — layout already exists
+- Update collection stats display
+- Do not add items underneath collections yet
+
 ## Notes
 
 <!-- Any extra notes -->
+
+- Reference: `context/features/dashboard-collections-spec.md`
+- Reference screenshot: `context/screenshots/dashboard-ui-main.png`
+- Do not touch mock data for anything else — only replace collections in the main area
 
 ## History
 
