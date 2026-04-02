@@ -88,7 +88,12 @@ async function main() {
     const existing = await prisma.item.findFirst({
       where: { title: data.title, userId: user.id },
     });
-    if (existing) return existing;
+    if (existing) {
+      return prisma.item.update({
+        where: { id: existing.id },
+        data: { isFavorite: data.isFavorite ?? false, isPinned: data.isPinned ?? false },
+      });
+    }
     return prisma.item.create({ data: { ...data, userId: user.id } });
   }
 
@@ -114,6 +119,7 @@ async function main() {
       contentType: ContentType.TEXT,
       language: "typescript",
       isFavorite: true,
+      isPinned: true,
       itemTypeId: typeMap.snippet,
       content: `import { useState, useEffect } from "react";
 
@@ -188,6 +194,7 @@ export function cn(...inputs: ClassValue[]) {
       title: "Code review prompt",
       contentType: ContentType.TEXT,
       isFavorite: true,
+      isPinned: true,
       itemTypeId: typeMap.prompt,
       content: `You are an expert code reviewer. Review the following code and provide feedback on:
 

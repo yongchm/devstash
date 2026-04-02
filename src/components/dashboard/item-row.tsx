@@ -1,16 +1,21 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, Pin } from "lucide-react";
-import { getTypeMeta, formatDate } from "@/lib/item-type-meta";
-import { mockItems } from "@/lib/mock-data";
+import { getTypeMetaByName } from "@/lib/item-type-meta";
+import type { ItemWithMeta } from "@/lib/db/items";
 
 interface ItemRowProps {
-  item: (typeof mockItems)[number];
+  item: ItemWithMeta;
   showPin?: boolean;
 }
 
 export function ItemRow({ item, showPin }: ItemRowProps) {
-  const { icon: Icon, color } = getTypeMeta(item.typeId);
+  const { icon: Icon, color } = getTypeMetaByName(item.typeName);
+
+  const formattedDate = item.createdAt.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 
   return (
     <Card
@@ -56,7 +61,7 @@ export function ItemRow({ item, showPin }: ItemRowProps) {
         </div>
 
         <span className="text-xs text-muted-foreground shrink-0 mt-0.5">
-          {formatDate(item.createdAt)}
+          {formattedDate}
         </span>
       </CardContent>
     </Card>
