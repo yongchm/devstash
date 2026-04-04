@@ -63,3 +63,26 @@ export async function getItemStats(userId: string): Promise<ItemStats> {
 
   return { totalItems, favoriteItemsCount };
 }
+
+export interface SidebarItemType {
+  name: string;
+  count: number;
+}
+
+export async function getItemTypesWithCounts(userId: string): Promise<SidebarItemType[]> {
+  const types = await prisma.itemType.findMany({
+    where: { isSystem: true },
+    include: {
+      items: {
+        where: { userId },
+        select: { id: true },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  return types.map((t) => ({
+    name: t.name,
+    count: t.items.length,
+  }));
+}

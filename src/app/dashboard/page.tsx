@@ -3,7 +3,7 @@ import { StatCard } from "@/components/dashboard/stat-card";
 import { CollectionCard } from "@/components/dashboard/collection-card";
 import { ItemRow } from "@/components/dashboard/item-row";
 import { getCollectionsWithMeta } from "@/lib/db/collections";
-import { getPinnedItems, getRecentItems, getItemStats } from "@/lib/db/items";
+import { getPinnedItems, getRecentItems, getItemStats, getItemTypesWithCounts } from "@/lib/db/items";
 import prisma from "@/lib/prisma";
 import { Package, FolderOpen, Heart, Star, Pin } from "lucide-react";
 import Link from "next/link";
@@ -12,19 +12,20 @@ export default async function DashboardPage() {
   // Resolve demo user — replaced with session lookup once auth is wired
   const user = await prisma.user.findUnique({ where: { email: "demo@devstash.io" } });
 
-  const [collections, pinnedItems, recentItems, itemStats] = user
+  const [collections, pinnedItems, recentItems, itemStats, sidebarItemTypes] = user
     ? await Promise.all([
         getCollectionsWithMeta(user.id),
         getPinnedItems(user.id),
         getRecentItems(user.id),
         getItemStats(user.id),
+        getItemTypesWithCounts(user.id),
       ])
-    : [[], [], [], { totalItems: 0, favoriteItemsCount: 0 }];
+    : [[], [], [], { totalItems: 0, favoriteItemsCount: 0 }, []];
 
   const favoriteCollectionsCount = collections.filter((c) => c.isFavorite).length;
 
   return (
-    <DashboardLayout>
+    <DashboardLayout sidebarItemTypes={sidebarItemTypes} sidebarCollections={collections}>
       <div className="p-6 space-y-8 max-w-5xl">
         {/* Header */}
         <div>

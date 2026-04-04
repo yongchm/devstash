@@ -1,6 +1,6 @@
 # Current Feature
 
-Dashboard Items — Real Data
+Stats & Sidebar — Real Data
 
 ## Status
 
@@ -12,20 +12,9 @@ Completed
 
 <!-- Goals & requirements -->
 
-- Replace dummy item data in the main dashboard area (pinned and recent items) with real data from Neon via Prisma
-- Create `src/lib/db/items.ts` with data fetching functions
-- Fetch items directly in server component (no client fetching)
-- Item card icon/border derived from the item type
-- Display item type tags and anything else currently shown
-- If there are no pinned items, nothing should display there
-
 ## Notes
 
 <!-- Any extra notes -->
-
-- Reference: `context/features/dashboard-items-spec.md`
-- Reference screenshot: `context/screenshots/dashboard-ui-main.png`
-- Do not touch mock data for anything else — only replace items in the main area
 
 ## History
 
@@ -39,3 +28,4 @@ Completed
 - Seed data — demo user (demo@devstash.io, bcrypt hashed), 7 system item types, 5 collections (React Patterns, AI Workflows, DevOps, Terminal Commands, Design Resources) with 18 items total; seed is idempotent; scripts/test-db.ts added for full verification
 - Dashboard Collections Real Data — replaced dummy collection data with real Neon/Prisma data; created src/lib/db/collections.ts; collection card border color derived from most-used content type; small icons for all item types present in each collection
 - Dashboard Items Real Data — replaced dummy item data with real Neon/Prisma data; created src/lib/db/items.ts with getPinnedItems, getRecentItems, getItemStats; item card icon/border derived from item type; pinned section hidden when empty; stats wired to real counts
+- Stats & Sidebar Real Data — wired stats cards to real DB counts; replaced sidebar mock data with live item types (with counts) and collections; item types link to /items/[typename]; favorite collections show star icons; recent collections show colored dot based on dominant item type; added "View all collections" link
