@@ -64,13 +64,18 @@ async function main() {
   });
 
   // ── Helper ─────────────────────────────────────────────────
-  async function upsertCollection(name: string, description: string) {
+  async function upsertCollection(name: string, description: string, isFavorite = false) {
     const existing = await prisma.collection.findFirst({
       where: { name, userId: user.id },
     });
-    if (existing) return existing;
+    if (existing) {
+      return prisma.collection.update({
+        where: { id: existing.id },
+        data: { isFavorite },
+      });
+    }
     return prisma.collection.create({
-      data: { name, description, userId: user.id },
+      data: { name, description, isFavorite, userId: user.id },
     });
   }
 
@@ -110,7 +115,8 @@ async function main() {
   console.log("Seeding React Patterns...");
   const reactPatterns = await upsertCollection(
     "React Patterns",
-    "Reusable React patterns and hooks"
+    "Reusable React patterns and hooks",
+    true
   );
 
   const reactItems = await Promise.all([
@@ -186,7 +192,8 @@ export function cn(...inputs: ClassValue[]) {
   console.log("Seeding AI Workflows...");
   const aiWorkflows = await upsertCollection(
     "AI Workflows",
-    "AI prompts and workflow automations"
+    "AI prompts and workflow automations",
+    true
   );
 
   const aiItems = await Promise.all([

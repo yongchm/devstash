@@ -1,66 +1,37 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Code,
-  Sparkles,
-  Terminal,
-  FileText,
-  File,
-  ImageIcon,
-  Link2,
-  Star,
-  Settings,
-  ChevronDown,
-  ChevronRight,
-  X,
-} from "lucide-react";
+import { File, Star, Settings, ChevronDown, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
-import {
-  mockUser,
-  mockItemTypes,
-  mockItemTypeCounts,
-  mockCollections,
-} from "@/lib/mock-data";
-
-const TYPE_ICONS: Record<string, React.ElementType> = {
-  type_snippet: Code,
-  type_prompt: Sparkles,
-  type_command: Terminal,
-  type_note: FileText,
-  type_file: File,
-  type_image: ImageIcon,
-  type_url: Link2,
-};
-
-const TYPE_SLUGS: Record<string, string> = {
-  type_snippet: "snippets",
-  type_prompt: "prompts",
-  type_command: "commands",
-  type_note: "notes",
-  type_file: "files",
-  type_image: "images",
-  type_url: "links",
-};
+import { mockUser } from "@/lib/mock-data";
+import { getTypeMetaByName } from "@/lib/item-type-meta";
+import type { SidebarItemType } from "@/lib/db/items";
+import type { CollectionWithMeta } from "@/lib/db/collections";
 
 interface SidebarProps {
   collapsed: boolean;
   mobileOpen: boolean;
   onClose: () => void;
+  itemTypes?: SidebarItemType[];
+  collections?: CollectionWithMeta[];
 }
 
 function SidebarContent({
   collapsed,
   onClose,
+  itemTypes = [],
+  collections = [],
 }: {
   collapsed: boolean;
   onClose?: () => void;
+  itemTypes?: SidebarItemType[];
+  collections?: CollectionWithMeta[];
 }) {
   const [typesOpen, setTypesOpen] = useState(true);
   const [collectionsOpen, setCollectionsOpen] = useState(true);
 
-  const favoriteCollections = mockCollections.filter((c) => c.isFavorite);
-  const recentCollections = mockCollections.filter((c) => !c.isFavorite);
+  const favoriteCollections = collections.filter((c) => c.isFavorite);
+  const recentCollections = collections.filter((c) => !c.isFavorite);
 
   return (
     <div className="flex flex-col h-full">
@@ -96,25 +67,24 @@ function SidebarContent({
           )}
           {(typesOpen || collapsed) && (
             <ul className="mt-1 space-y-0.5">
-              {mockItemTypes.map((type) => {
-                const Icon = TYPE_ICONS[type.id] ?? File;
-                const slug = TYPE_SLUGS[type.id] ?? type.name.toLowerCase();
-                const count = mockItemTypeCounts[type.id] ?? 0;
+              {itemTypes.map((type) => {
+                const meta = getTypeMetaByName(type.name);
+                const Icon = meta.icon ?? File;
                 return (
-                  <li key={type.id}>
+                  <li key={type.name}>
                     <Link
-                      href={`/items/${slug}`}
+                      href={`/items/${type.name}`}
                       className="flex items-center gap-2.5 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
                     >
                       <Icon
                         className="h-4 w-4 shrink-0"
-                        style={{ color: type.color }}
+                        style={{ color: meta.color }}
                       />
                       {!collapsed && (
                         <>
-                          <span className="flex-1 truncate">{type.name}</span>
+                          <span className="flex-1 truncate capitalize">{type.name}</span>
                           <span className="text-xs tabular-nums text-muted-foreground">
-                            {count}
+                            {type.count}
                           </span>
                         </>
                       )}
@@ -170,25 +140,41 @@ function SidebarContent({
                 {recentCollections.length > 0 && (
                   <div>
                     <p className="px-2 mb-1 text-[10px] uppercase tracking-wider text-muted-foreground/50">
-                      All Collections
+                      Recent
                     </p>
                     <ul className="space-y-0.5">
-                      {recentCollections.map((col) => (
-                        <li key={col.id}>
-                          <Link
-                            href={`/collections/${col.id}`}
-                            className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-                          >
-                            <span className="flex-1 truncate">{col.name}</span>
-                            <span className="text-xs tabular-nums text-muted-foreground">
-                              {col.itemCount}
-                            </span>
-                          </Link>
-                        </li>
-                      ))}
+                      {recentCollections.map((col) => {
+                        const dotColor = col.dominantTypeName
+                          ? getTypeMetaByName(col.dominantTypeName).color
+                          : "#94a3b8";
+                        return (
+                          <li key={col.id}>
+                            <Link
+                              href={`/collections/${col.id}`}
+                              className="flex items-center gap-2 px-2 py-1.5 rounded-md text-sm text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                            >
+                              <span
+                                className="h-2.5 w-2.5 rounded-full shrink-0"
+                                style={{ backgroundColor: dotColor }}
+                              />
+                              <span className="flex-1 truncate">{col.name}</span>
+                              <span className="text-xs tabular-nums text-muted-foreground">
+                                {col.itemCount}
+                              </span>
+                            </Link>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}
+
+                <Link
+                  href="/collections"
+                  className="block px-2 py-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  View all collections →
+                </Link>
               </div>
             )}
           </div>
@@ -224,7 +210,7 @@ function SidebarContent({
   );
 }
 
-export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
+export function Sidebar({ collapsed, mobileOpen, onClose, itemTypes, collections }: SidebarProps) {
   return (
     <>
       {/* Desktop sidebar */}
@@ -233,7 +219,7 @@ export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
           collapsed ? "w-14" : "w-60"
         }`}
       >
-        <SidebarContent collapsed={collapsed} />
+        <SidebarContent collapsed={collapsed} itemTypes={itemTypes} collections={collections} />
       </aside>
 
       {/* Mobile drawer */}
@@ -244,7 +230,7 @@ export function Sidebar({ collapsed, mobileOpen, onClose }: SidebarProps) {
             onClick={onClose}
           />
           <aside className="fixed inset-y-0 left-0 z-50 w-64 flex flex-col bg-sidebar border-r border-border">
-            <SidebarContent collapsed={false} onClose={onClose} />
+            <SidebarContent collapsed={false} onClose={onClose} itemTypes={itemTypes} collections={collections} />
           </aside>
         </div>
       )}

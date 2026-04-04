@@ -3,12 +3,16 @@
 import { useState } from "react";
 import { TopBar } from "./top-bar";
 import { Sidebar } from "./sidebar";
+import type { SidebarItemType } from "@/lib/db/items";
+import type { CollectionWithMeta } from "@/lib/db/collections";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  sidebarItemTypes?: SidebarItemType[];
+  sidebarCollections?: CollectionWithMeta[];
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, sidebarItemTypes, sidebarCollections }: DashboardLayoutProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -28,6 +32,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           collapsed={collapsed}
           mobileOpen={mobileOpen}
           onClose={() => setMobileOpen(false)}
+          itemTypes={sidebarItemTypes}
+          collections={sidebarCollections}
         />
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
