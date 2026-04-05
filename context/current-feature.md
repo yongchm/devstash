@@ -1,12 +1,8 @@
 # Current Feature
 
-Stats & Sidebar — Real Data
-
 ## Status
 
 <!-- Not Started|In Progress|Completed -->
-
-Completed
 
 ## Goals
 
@@ -29,3 +25,4 @@ Completed
 - Dashboard Collections Real Data — replaced dummy collection data with real Neon/Prisma data; created src/lib/db/collections.ts; collection card border color derived from most-used content type; small icons for all item types present in each collection
 - Dashboard Items Real Data — replaced dummy item data with real Neon/Prisma data; created src/lib/db/items.ts with getPinnedItems, getRecentItems, getItemStats; item card icon/border derived from item type; pinned section hidden when empty; stats wired to real counts
 - Stats & Sidebar Real Data — wired stats cards to real DB counts; replaced sidebar mock data with live item types (with counts) and collections; item types link to /items/[typename]; favorite collections show star icons; recent collections show colored dot based on dominant item type; added "View all collections" link
+- Code Quality Quick Wins — replaced N+1 query in getItemTypesWithCounts with Prisma _count aggregation; removed non-null assertion on DATABASE_URL in prisma.config.ts; deleted unused getTypeMeta() export from item-type-meta.ts
