@@ -36,9 +36,6 @@ export const TYPE_META_BY_NAME: Record<string, TypeMeta> = {
   link:    { icon: Link2,     color: "#10b981" },
 };
 
-export function getTypeMeta(typeId: string): TypeMeta {
-  return TYPE_META[typeId] ?? { icon: File, color: "#94a3b8" };
-}
 
 export function getTypeMetaByName(name: string): TypeMeta {
   return TYPE_META_BY_NAME[name] ?? { icon: File, color: "#94a3b8" };
