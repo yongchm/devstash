@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { File, Star, Settings, ChevronDown, ChevronRight, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { mockUser } from "@/lib/mock-data";
 import { getTypeMetaByName } from "@/lib/item-type-meta";
@@ -83,6 +84,11 @@ function SidebarContent({
                       {!collapsed && (
                         <>
                           <span className="flex-1 truncate capitalize">{type.name}</span>
+                          {(type.name === "file" || type.name === "image") && (
+                            <Badge variant="outline" className="text-[10px] px-1 py-0 h-4 text-muted-foreground border-muted-foreground/30">
+                              PRO
+                            </Badge>
+                          )}
                           <span className="text-xs tabular-nums text-muted-foreground">
                             {type.count}
                           </span>
