@@ -29,3 +29,13 @@ npm run lint     # Run ESLint
 - **React 19** with React Compiler enabled (`reactCompiler: true` in `next.config.ts`)
 - **Tailwind CSS v4** via `@tailwindcss/postcss` — no `tailwind.config.*` file; configuration goes in `globals.css` using `@theme`
 - **TypeScript** strict mode; path alias `@/*` → `src/*`
+
+## Neon Database (MCP)
+
+When using the Neon MCP tools, always default to:
+
+- **Project:** `destash` (`nameless-hall-29737147`)
+- **Branch:** `development` (`br-orange-lake-anqk8v5m`)
+- **Database:** `neondb`
+
+**Never use the `production` branch (`br-restless-tooth-an0syw1r`) unless I explicitly say so.**
