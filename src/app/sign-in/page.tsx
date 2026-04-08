@@ -33,7 +33,11 @@ export default function SignInPage() {
 
     setLoading(false)
     if (result?.error) {
-      setError("Invalid email or password")
+      if (result.code === "unverified_email") {
+        setError("Please verify your email before signing in. Check your inbox.")
+      } else {
+        setError("Invalid email or password")
+      }
     } else {
       setToast({ message: "Signed in successfully!", type: "success" })
       setTimeout(() => router.push("/dashboard"), 1000)
