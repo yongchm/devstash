@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { File, Star, Settings, ChevronDown, ChevronRight, X } from "lucide-react";
+import { File, Star, ChevronDown, ChevronRight, ChevronUp, X, LogOut, User } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useState } from "react";
-import { mockUser } from "@/lib/mock-data";
+import { useState, useRef, useEffect } from "react";
+import { useSession, signOut } from "next-auth/react";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { getTypeMetaByName } from "@/lib/item-type-meta";
 import type { SidebarItemType } from "@/lib/db/items";
 import type { CollectionWithMeta } from "@/lib/db/collections";
@@ -30,6 +31,20 @@ function SidebarContent({
 }) {
   const [typesOpen, setTypesOpen] = useState(true);
   const [collectionsOpen, setCollectionsOpen] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    if (menuOpen) document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   const favoriteCollections = collections.filter((c) => c.isFavorite);
   const recentCollections = collections.filter((c) => !c.isFavorite);
@@ -188,29 +203,54 @@ function SidebarContent({
       </nav>
 
       {/* User area */}
-      <div
-        className={`border-t border-border p-3 flex items-center gap-3 ${
-          collapsed ? "justify-center" : ""
-        }`}
-      >
-        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-xs font-semibold text-primary-foreground shrink-0">
-          {mockUser.name.charAt(0)}
-        </div>
-        {!collapsed && (
-          <>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium leading-none truncate">
-                {mockUser.name}
-              </p>
-              <p className="text-xs text-muted-foreground truncate mt-0.5">
-                {mockUser.email}
-              </p>
-            </div>
-            <button className="p-1 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors">
-              <Settings className="h-4 w-4" />
+      <div ref={menuRef} className="relative shrink-0 border-t border-border">
+        {/* Dropdown menu — opens above */}
+        {menuOpen && (
+          <div className="absolute bottom-full left-2 right-2 mb-1 rounded-md border border-border bg-popover shadow-md py-1 z-20">
+            <Link
+              href="/profile"
+              onClick={() => setMenuOpen(false)}
+              className="flex items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+            >
+              <User className="h-4 w-4 text-muted-foreground" />
+              Profile
+            </Link>
+            <div className="my-1 border-t border-border" />
+            <button
+              onClick={() => signOut()}
+              className="flex w-full items-center gap-2 px-3 py-2 text-sm text-foreground hover:bg-accent transition-colors"
+            >
+              <LogOut className="h-4 w-4 text-muted-foreground" />
+              Sign out
             </button>
-          </>
+          </div>
         )}
+
+        <button
+          onClick={() => setMenuOpen((o) => !o)}
+          className={`w-full p-3 flex items-center gap-3 hover:bg-accent transition-colors ${
+            collapsed ? "justify-center" : ""
+          }`}
+        >
+          <UserAvatar name={user?.name} image={user?.image} />
+          {!collapsed && (
+            <>
+              <div className="flex-1 min-w-0 text-left">
+                <p className="text-sm font-medium leading-none truncate">
+                  {user?.name ?? "—"}
+                </p>
+                <p className="text-xs text-muted-foreground truncate mt-0.5">
+                  {user?.email ?? ""}
+                </p>
+              </div>
+              {menuOpen ? (
+                <ChevronUp className="h-4 w-4 shrink-0 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
+              )}
+            </>
+          )}
+        </button>
       </div>
     </div>
   );
