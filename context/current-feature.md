@@ -2,15 +2,15 @@
 
 ## Status
 
-<!-- Not Started|In Progress|Completed -->
+Not Started
 
 ## Goals
 
-<!-- Goals & requirements -->
+<!-- Add goals here -->
 
 ## Notes
 
-<!-- Any extra notes -->
+<!-- Add notes here -->
 
 ## History
 
@@ -28,3 +28,4 @@
 - Code Quality Quick Wins — replaced N+1 query in getItemTypesWithCounts with Prisma _count aggregation; removed non-null assertion on DATABASE_URL in prisma.config.ts; deleted unused getTypeMeta() export from item-type-meta.ts
 - Auth Setup - NextAuth v5 + GitHub OAuth — installed next-auth@beta and @auth/prisma-adapter; split auth config for edge compatibility; GitHub provider; /dashboard/* protected via src/proxy.ts with named proxy export; session extended with user.id; AUTH_URL required in .env for production host trust
 - Auth Phase 2 — Email/Password Credentials — added Credentials provider to auth.ts with bcrypt validation; auth.config.ts kept edge-safe (GitHub only); POST /api/auth/register accepts name/email/password/confirmPassword, validates, deduplicates, hashes with bcryptjs, and creates user
+- Auth UI — Sign In, Register & Sidebar Avatar — custom /sign-in and /register pages with email/password fields and GitHub OAuth button; UserAvatar component with GitHub image or initials fallback; sidebar bottom area replaced with dropdown menu (Profile link + Sign out); toast notifications on register success and sign-in; layout height anchored to h-screen so avatar is always visible when scrolling
