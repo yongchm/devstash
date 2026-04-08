@@ -1,9 +1,13 @@
-import NextAuth from "next-auth"
+import NextAuth, { CredentialsSignin } from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
 import authConfig from "@/auth.config"
+
+class UnverifiedEmailError extends CredentialsSignin {
+  code = "unverified_email"
+}
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -43,6 +47,8 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         )
 
         if (!passwordMatch) return null
+
+        if (!user.emailVerified) throw new UnverifiedEmailError()
 
         return { id: user.id, email: user.email, name: user.name, image: user.image }
       },
