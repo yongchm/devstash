@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs"
 import { randomUUID } from "crypto"
 import { prisma } from "@/lib/prisma"
 import { sendVerificationEmail } from "@/lib/email"
+import { flags } from "@/lib/flags"
 
 export async function POST(request: Request) {
   const body = await request.json()
@@ -28,14 +29,16 @@ export async function POST(request: Request) {
     select: { id: true, email: true, name: true },
   })
 
-  const token = randomUUID()
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+  if (flags.emailVerification) {
+    const token = randomUUID()
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
 
-  await prisma.verificationToken.create({
-    data: { identifier: email, token, expires },
-  })
+    await prisma.verificationToken.create({
+      data: { identifier: email, token, expires },
+    })
 
-  await sendVerificationEmail(email, token)
+    await sendVerificationEmail(email, token)
+  }
 
   return NextResponse.json({ user }, { status: 201 })
 }
